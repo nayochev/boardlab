@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+html(lang="ja")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title 研究室口コミ投稿サイト
+  body
+    h1 研究室口コミ投稿サイト
+    a(href="/logout") ログアウト
+    h2 新規投稿
+    form(method="post" action="/posts")
+      div
+        p 大学名
+        textarea(name="university", cols="10", rows="1")
+      div
+        p 研究室
+        textarea(name="laboratory", cols="15", rows="1")
+      div
+        p 本文
+        textarea(name="content", cols="40", rows="4")
+      div
+        button(type="submit") 投稿
+
+    h2 投稿一覧
+    each post in posts
+      - var isPostedByAdmin = (post.postedBy === 'admin')
+      if isPostedByAdmin
+        h3 #{post.id} : 管理人
+      else
+        h3 #{post.id} : ID:#{post.trackingCookie}
+      h4 #{post.university}
+      h4 #{post.laboratory}
+      p #{post.content}
+      p 投稿日時: #{post.createdAt}
+      - var isAdmin = (user === 'admin')
+      if isAdmin
+        p 投稿者: #{post.postedBy}
+      - var isDeletable = (user === post.postedBy || isAdmin)
+      if isDeletable
+        form(method="post" action="/posts?delete=1")
+          input(type="hidden" name="id" value=post.id)
+          button(type="submit") 削除
+      hr
